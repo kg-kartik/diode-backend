@@ -6,9 +6,9 @@ import Users from "../Types/Users";
 
 require("dotenv").config();
 
-const secret = "hello";
+const secret = process.env.JWT_SECRET;
 interface JwtPayload {
-    email: String;
+    _id: String;
 }
 
 export const requireLogin = async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -21,11 +21,11 @@ export const requireLogin = async (req: RequestWithUser, res: Response, next: Ne
     //Get the token from Bearer "token"
     const token = authorization.replace("Bearer ", "");
 
-    const { email } = jwt.verify(token, secret) as JwtPayload;
+    const { _id } = jwt.verify(token, secret) as JwtPayload;
 
     try {
         req.user = (await UsersModel.findOne({
-            email
+            _id
         })) as Users;
     } catch (e) {
         console.log(e, "err");

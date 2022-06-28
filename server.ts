@@ -12,8 +12,7 @@ app.use(cors());
 
 dotenv.config();
 
-const db: string =
-    "mongodb+srv://kartik:kartik@cluster0.sn1sx.mongodb.net/?retryWrites=true&w=majority";
+const db: any = process.env.MONGO_URI;
 console.log(db);
 
 mongoose
