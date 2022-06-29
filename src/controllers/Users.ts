@@ -5,6 +5,7 @@ import ErrorResponse from "../utils/ErrorResponse";
 import InstancesModel from "../models/Instances";
 import jwt from "jsonwebtoken";
 import RequestWithUser from "../Types/RequestWithUser";
+import Users from "src/Types/Users";
 
 export const signup = (req: Request, res: Response, next: NextFunction) => {
     const { personalaccesstoken } = req.body;
@@ -118,33 +119,20 @@ export const createInstance = (req: Request, res: Response, next: NextFunction) 
         .catch(next);
 };
 
-export const selectRepo = (req: Request, res: Response, next: NextFunction) => {
-    const { updatedInstanceDetails, instanceId } = req.body;
+export const getInstances = (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.body;
 
-    InstancesModel.findOneAndUpdate(
-        {
-            instanceId
-        },
-        {
-            $set: {
-                repo: updatedInstanceDetails.repo,
-                buildpack: updatedInstanceDetails.buildpack,
-                env: updatedInstanceDetails.env
-            }
-        },
-        {
-            new: true,
-            runValidators: true
-        }
-    )
-        .then((updatedInstance) => {
+    UsersModel.findById({
+        _id: userId
+    })
+        .populate("instances")
+        .then((user: any) => {
             const response: ApiResponse = {
-                data: updatedInstance,
+                data: user.instances,
                 status: 200,
                 success: true,
-                message: "Instance set for Deployment"
+                message: "Instance successfully created"
             };
-
             res.status(200).json(response);
         })
         .catch(next);
